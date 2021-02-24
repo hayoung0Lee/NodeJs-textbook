@@ -6,6 +6,9 @@ const session = require("express-session");
 const dotenv = require("dotenv");
 const multer = require("multer");
 const fs = require("fs");
+const indexRouter = require("./routes/index");
+const userRouter = require("./routes/user");
+
 dotenv.config();
 
 const app = express();
@@ -56,32 +59,37 @@ const upload = multer({
   }),
 });
 
-app.use("/", express.static(path.join(__dirname, "public")));
-app.get(
-  "/",
-  (req, res, next) => {
-    // res.send("Hello, Express");
-    // throw new Error("에러는 에러 처리 미들웨어로 갑니다");
-    res.sendFile(path.join(__dirname, "/index.html"));
-    // next();
-  }
-  //   (req, res, next) => {
-  //     console.log("response");
-  //     try {
-  //       throw new Error("에러는 에러 처리 미들웨어로 갑니다");
-  //     } catch (err) {
-  //       next("완전 망했습니다");
-  //     }
-  //   }
-  //   (req, res) => {
-  //     console.log("next");
-  //   }
-);
-
-app.post("/upload", upload.single("file"), (req, res) => {
-  console.log(req.file, req.body);
-  res.send("OK");
+app.use("/", indexRouter);
+app.use("/user", userRouter);
+app.use((req, res, next) => {
+  res.status(404).send("Not Found");
 });
+// app.use("/", express.static(path.join(__dirname, "public")));
+// app.get(
+//   "/",
+//   (req, res, next) => {
+//     // res.send("Hello, Express");
+//     // throw new Error("에러는 에러 처리 미들웨어로 갑니다");
+//     res.sendFile(path.join(__dirname, "/index.html"));
+//     // next();
+//   }
+//   //   (req, res, next) => {
+//   //     console.log("response");
+//   //     try {
+//   //       throw new Error("에러는 에러 처리 미들웨어로 갑니다");
+//   //     } catch (err) {
+//   //       next("완전 망했습니다");
+//   //     }
+//   //   }
+//   //   (req, res) => {
+//   //     console.log("next");
+//   //   }
+// );
+
+// app.post("/upload", upload.single("file"), (req, res) => {
+//   console.log(req.file, req.body);
+//   res.send("OK");
+// });
 app.use((err, req, res, next) => {
   if (err) {
     console.error("에러처리 중입니다", err);
